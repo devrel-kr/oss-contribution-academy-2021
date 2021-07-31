@@ -4,6 +4,7 @@ on:
   pull_request:
     types:
     - opened
+    - synchronize
     branches:
     - main
 
@@ -19,13 +20,13 @@ jobs:
       run: |
         Write-Host '${{ toJSON(github.event) }}'
 
-    # - name: Get checkpoints
-    #   id: checkpoint
-    #   shell: pwsh
-    #   run: |
-    #     $isOcaParticipant = "${{ contains(env.OCA_PARTICIPANTS, github.event.user.login) }}"
+    - name: Get checkpoints
+      id: checkpoint
+      shell: pwsh
+      run: |
+        $isOcaParticipant = "${{ contains(env.OCA_PARTICIPANTS, github.event.pull_request.user.login) }}"
 
-    #     echo "::set-output name=isOcaParticipant::$isOcaParticipant"
+        echo "::set-output name=isOcaParticipant::$isOcaParticipant"
 
     # - name: Add a label
     #   if: ${{ steps.checkpoint.outputs.isOcaParticipant == 'true' }}
