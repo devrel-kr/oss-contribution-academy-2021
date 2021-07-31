@@ -29,20 +29,21 @@ jobs:
         echo "::set-output name=isOcaParticipant::$isOcaParticipant"
 
     - name: Add a label
-      if: ${{ steps.checkpoint.outputs.isOcaParticipant == 'true' }}
+      if: ${{ steps.checkpoint.outputs.isOcaParticipant == 'false' }}
       uses: buildsville/add-remove-label@v1
       with:
         token: "${{ secrets.GITHUB_TOKEN }}"
         label: 'oca-pr'
         type: add
 
-    # - name: Send a message to Slack
-    #   if: ${{ steps.checkpoint.outputs.isOcaParticipant == 'true' }}
-    #   id: slack
-    #   uses: slackapi/slack-github-action@v1.15.0
-    #   with:
-    #     channel-id: 'CHANNEL_ID'  # Slack channel id to post message
-    #     slack-message: 'posting from a github action!'
-    #     payload: |
-    #   env:
-    #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    - name: Send a message to Slack
+      if: ${{ steps.checkpoint.outputs.isOcaParticipant == 'true' }}
+      shell: pwsh
+      run: |
+        $url = "${{ secrets.OCA_SLACK_WEBHOOK_URL }}"
+        $iconUrl = "${{ secrets.OCA_SLACK_WEBHOOK_ICON_URL }}"
+        $channel = "${{ secrets.OCA_SLACK_CHANNEL }}"
+        $text = "새 PR #${{ github.event.pull_request.number }} 생성!: <${{ github.event.pull_request.html_url }}|PR 내용 확인>"
+        $body = @{ "channel" = $channel; "username" = "AzFuncOpenApiBot"; "icon_url" = $iconUrl; "text" = $text; }
+
+        Invoke-RestMethod -Method Post -Uri $url -Body $($body | ConvertTo-Json)
