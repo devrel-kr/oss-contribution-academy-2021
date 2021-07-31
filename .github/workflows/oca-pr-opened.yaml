@@ -24,19 +24,17 @@ jobs:
       id: checkpoint
       shell: pwsh
       run: |
-        echo "${{ secrets.OCA_PARTICIPANTS }}"
-        echo "${{ github.event.pull_request.user.login }}"
         $isOcaParticipant = "${{ contains(secrets.OCA_PARTICIPANTS, github.event.pull_request.user.login) }}"
 
         echo "::set-output name=isOcaParticipant::$isOcaParticipant"
 
-    # - name: Add a label
-    #   if: ${{ steps.checkpoint.outputs.isOcaParticipant == 'true' }}
-    #   uses: buildsville/add-remove-label@v1
-    #   with:
-    #     token: "${{ secrets.GITHUB_TOKEN }}"
-    #     label: 'oca-pr'
-    #     type: add
+    - name: Add a label
+      if: ${{ steps.checkpoint.outputs.isOcaParticipant == 'true' }}
+      uses: buildsville/add-remove-label@v1
+      with:
+        token: "${{ secrets.GITHUB_TOKEN }}"
+        label: 'oca-pr'
+        type: add
 
     # - name: Send a message to Slack
     #   if: ${{ steps.checkpoint.outputs.isOcaParticipant == 'true' }}
