@@ -25,22 +25,11 @@ jobs:
 
         echo "::set-output name=isOcaParticipant::$isOcaParticipant"
 
-    # - name: Add a label
-    #   if: ${{ steps.checkpoint.outputs.isOcaParticipant == 'true' }}
-    #   uses: buildsville/add-remove-label@v1
-    #   with:
-    #     token: "${{ secrets.GITHUB_TOKEN }}"
-    #     label: 'oca-issue'
-    #     type: add
-
     - name: Add a label
       if: ${{ steps.checkpoint.outputs.isOcaParticipant == 'true' }}
       shell: pwsh
       run: |
         $headers = @{ "Authorization" = "token ${{ secrets.GITHUB_TOKEN }}"; "User-Agent" = "OCA Bot"; "Accept" = "application/vnd.github.v3+json" }
-
-        $owner = "devrel-kr"
-        $repository = "oss-contribution-academy-2021"
         $issueId = "${{ github.event.issue.number }}"
 
         $labelsToAdd = "oca-issue" -split ","
@@ -48,9 +37,6 @@ jobs:
 
         $url = $("${{ github.event.repository.issues_url}}".Replace("{/number}", "/$issueId")) + "/labels"
 
-        echo $url
-
-        # $url = "https://api.github.com/repos/$owner/$repository/issues/$issueId/labels"
         Invoke-RestMethod -Method Post -Uri $url -Headers $headers -Body $($body | ConvertTo-Json)
 
     - name: Send a message to Slack
