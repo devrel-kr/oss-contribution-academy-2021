@@ -1,0 +1,47 @@
+name: On OCA PR Opened
+
+on:
+  pull_request:
+    types:
+    - opened
+    branches:
+    - main
+
+jobs:
+  labelling:
+    name: 'Add a label on submission: oca-pr'
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Get event payload
+      shell: pwsh
+      run: |
+        Write-Host '${{ toJSON(github.event) }}'
+
+    # - name: Get checkpoints
+    #   id: checkpoint
+    #   shell: pwsh
+    #   run: |
+    #     $isOcaParticipant = "${{ contains(env.OCA_PARTICIPANTS, github.event.user.login) }}"
+
+    #     echo "::set-output name=isOcaParticipant::$isOcaParticipant"
+
+    # - name: Add a label
+    #   if: ${{ steps.checkpoint.outputs.isOcaParticipant == 'true' }}
+    #   uses: buildsville/add-remove-label@v1
+    #   with:
+    #     token: "${{ secrets.GITHUB_TOKEN }}"
+    #     label: 'oca-pr'
+    #     type: add
+
+    # - name: Send a message to Slack
+    #   if: ${{ steps.checkpoint.outputs.isOcaParticipant == 'true' }}
+    #   id: slack
+    #   uses: slackapi/slack-github-action@v1.15.0
+    #   with:
+    #     channel-id: 'CHANNEL_ID'  # Slack channel id to post message
+    #     slack-message: 'posting from a github action!'
+    #     payload: |
+    #   env:
+    #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
