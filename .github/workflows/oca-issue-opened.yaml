@@ -46,10 +46,10 @@ jobs:
         $labelsToAdd = "oca-issue" -split ","
         $body = @{ "labels" = $labelsToAdd }
 
-        $url = $("${{ github.event.repository.issues_url}}".Replace("{/number}", $issueId)) + "/labels"
+        $url = $("${{ github.event.repository.issues_url}}".Replace("{/number}", "/$issueId")) + "/labels"
 
         echo $url
-        
+
         # $url = "https://api.github.com/repos/$owner/$repository/issues/$issueId/labels"
         Invoke-RestMethod -Method Post -Uri $url -Headers $headers -Body $($body | ConvertTo-Json)
 
